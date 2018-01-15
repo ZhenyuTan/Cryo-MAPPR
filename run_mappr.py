@@ -19,11 +19,13 @@ def setupParserOptions():
         parser.add_option("--dir",dest="dir",type="string",metavar="Directory",default='blank',
                     help="Provide directory containing micrographs")
         parser.add_option("--angpix",dest="apix",type="float",metavar='Angpix',default=0.9,
-                    help='Pixel size of micrographs (Default=0.9)')
+                    help='Pixel size of micrographs in .mrc format (Default=0.9)')
         parser.add_option("--cs",dest="cs",type="float",metavar='Cs',default=2.7,
                     help='Spherical aberration of microscope in mm (Default=2.7)')
 	parser.add_option("--kev",dest="kev",type="int",metavar='Kev',default=300,
                     help='Accelerating voltage of microscope (Default=300)')
+	parser.add_option("--wildcard",dest='wildcard',type='string',metavar='wildcard',default='',
+		    help='Optional: Provide wildcard suffix for input micrographs. Default is none')
 	parser.add_option("-d", action="store_true",dest="debug",default=False,
 	            help="debug")
         options,args = parser.parse_args()
@@ -40,11 +42,23 @@ def setupParserOptions():
         return params
 
 #=============================
-#def checkConflicts(params):
+def checkConflicts(params):
 
+	#Get number of micrographs in input directory
+	numMics=len(glob.glob('%s/*%s.mrc' %(params['dir'],params['wildcard'])))
 
+	#If zero micrographs, throw error & exit
+	if numMics == 0: 
+		print '\nError: No micrographs found in input directory %s with extension *%s.mrc. Exiting.\n' %(params['dir'],params['wildcard'])
+		sys.exit()
+
+#============================
 if __name__ == "__main__":
 
+	#Get input parameters from the command line
         params=setupParserOptions()
 
-	print 'first test'
+	#Check inputs exist
+	checkConflicts(params)
+
+	print 'finished'
