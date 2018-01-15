@@ -11,7 +11,7 @@ Software dependencies:
 
 Cryo-MAPPR requires that the Github repo be added into the user PYTHONPATH. For bash shells, include this in your .bashrc: 
 
-export PYTHONPATH=/path/to/Cryo-MAPPR/lib:$PYTHONPATH
+<pre>export PYTHONPATH=/path/to/Cryo-MAPPR/lib:$PYTHONPATH</pre>
 
 ## Development notes
  
@@ -19,8 +19,8 @@ The majority of the code must be written in the Cryo-MAPPR/lib python library an
 
 For example, to run the defition 'testing' from lib/input_check.py: 
 
->> import input_check
->> input_check.testing()
+<pre>>>> import input_check
+>>> input_check.testing()</pre>
 
 
 
