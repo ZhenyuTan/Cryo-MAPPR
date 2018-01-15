@@ -11,6 +11,7 @@ import sys
 import subprocess
 import shutil
 import datetime
+import check_ice
 
 #=========================
 def setupParserOptions():
@@ -70,6 +71,9 @@ if __name__ == "__main__":
 
 	#Check inputs exist
 	checkConflicts(params)
+
+	#Check for non-vitreous ice in images by looking at 3.5 A intensity. If ____ sigma about background, then discard
+	badlist=check_ice.checkmics(glob.glob('%s/*%s.mrc' %(params['dir'],params['wildcard'])),params['apix'])
 
 	if params['debug'] is True: 
 		print 'finished'
