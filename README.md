@@ -22,5 +22,9 @@ For example, to run the defition 'testing' from lib/input_check.py:
 <pre>>>> import input_check
 >>> input_check.testing()</pre>
 
+For all debugging, print outputs using the following: 
+
+<pre>if params['debug'] is True:
+	print 'text here'</pre>
 
 

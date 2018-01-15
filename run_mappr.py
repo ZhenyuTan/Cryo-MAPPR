@@ -26,6 +26,8 @@ def setupParserOptions():
                     help='Accelerating voltage of microscope (Default=300)')
 	parser.add_option("--wildcard",dest='wildcard',type='string',metavar='wildcard',default='',
 		    help='Optional: Provide wildcard suffix for input micrographs. Default is none')
+        parser.add_option("-v", action="store_true",dest="version",default=False,
+                    help="Print version and exit.")
 	parser.add_option("-d", action="store_true",dest="debug",default=False,
 	            help="debug")
         options,args = parser.parse_args()
@@ -54,11 +56,20 @@ def checkConflicts(params):
 
 #============================
 if __name__ == "__main__":
-
+	
+	#Version number
+	version='0.0.1'
+	
 	#Get input parameters from the command line
         params=setupParserOptions()
+
+	#Print version and exit
+	if params['version'] is True: 
+		print '\nVersion=%s\n' %(version)
+		sys.exit()
 
 	#Check inputs exist
 	checkConflicts(params)
 
-	print 'finished'
+	if params['debug'] is True: 
+		print 'finished'
