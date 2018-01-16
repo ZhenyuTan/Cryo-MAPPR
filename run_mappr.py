@@ -75,5 +75,7 @@ if __name__ == "__main__":
 	#Check for non-vitreous ice in images by looking at 3.5 A intensity. If ____ sigma about background, then discard
 	badlist=check_ice.checkmics(glob.glob('%s/*%s.mrc' %(params['dir'],params['wildcard'])),params['apix'])
 
+	#Create PDF output file with summary info and example images
+	print badlist
 	if params['debug'] is True: 
 		print 'finished'

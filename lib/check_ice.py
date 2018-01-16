@@ -8,11 +8,9 @@ import matplotlib.cm as cm
 import numpy as np
 import pylab as py
 import radialProfile
-import pyfits
 
 #====================
 def checkmics(miclist,apix): 
-
 	'''
 	This will open micrographs to check for non-vitreous ice, where micrographs will be discarded if
 	there are reflections of non-vitreous ice above a given threshold
@@ -32,16 +30,48 @@ def checkmics(miclist,apix):
 			badlist.append(micfile)
 			continue
 
-		#Get dimensions: np.shape(micfile.data)
-
+		#Get dimensions: 
+		x,y=np.shape(micfile.data)
+	
+		#If not square, make it a square with smallest dimension
+		if x != y: 
+			newdim=min(x,y)
+			micfile=micfile.data[0:newdim,0:newdim] #np.reshape(micfile.data,(newdim,newdim))
+		if x == y: 
+			newdim=min(x,y)
+			micfile=micfile.data
+		
 		#Calc. FT of input micrograph
-		F1=fftpack.fft2(micfile.data)
+		F1=fftpack.fft2(micfile)
 		F2 = fftpack.fftshift( F1 )
 		psd2D = np.abs( F2 )**2
-		print np.shape(psd2D)
 		psd1D = radialProfile.azimuthalAverage(psd2D)
-		print np.shape(psd1D)	
+
+		#Get max value b/w 3.6 and 3.8 
+		#To find x value entry for a given resolution: 
+                # X= (Full XDIM)*(APix)/(Resolution shell wanted)
+                # X= (3710 * 0.91)/(3.7) = 912
+		Xtoget=round((newdim*apix)/(3.7))
+		startX=Xtoget-5
+		maxValue=0
+		finishX=Xtoget+5
+		while startX <= finishX:
+			checkVal=psd1D[int(startX)]
+			if checkVal>maxValue: 
+				maxValue=checkVal
+			startX=startX+1
+	
+		#Get adjacent value for non vitreous ice
+		Xtoget=round((newdim*apix)/(4))
+		nullValue=psd1D[int(Xtoget)]
+		VitreousCheck=maxValue/nullValue
+		if VitreousCheck > 0.995:
+			badlist.append(mic) 
+				
 		#Can be used to plot with pyfits
+		'''
+		import pyfits
+		micfile=mrcfile.open(mic)
 		py.figure(1)
 		py.clf()
 		py.imshow( np.log10( micfile.data ), cmap=py.cm.Greys)
@@ -54,9 +84,6 @@ def checkmics(miclist,apix):
 		py.xlabel('Spatial Frequency')
 		py.ylabel('Power Spectrum')
  		py.show()
-		
-
-		#Take circular average within resolution shell 3.6-3.8A, relative intensity to 3.1A
-
+		'''
 		
 	return badlist
