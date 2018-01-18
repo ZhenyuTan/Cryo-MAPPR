@@ -85,10 +85,14 @@ if __name__ == "__main__":
 	percentIceAllowed=1 #Hard coded parameter: percentage of micrograph covered by ice 
 	check_ice.findIce(goodlist,badlist,params['apix'],params['diam'],percentIceAllowed)
 
-	#Remove micrographs with more than ___% of pixels outside of 4 sigma
-	#goodlist,badlist=check_ice.checkStats(goodlist,badlist)
+	#Goal: Create PDF output file with summary info and example images
 	
-	#Create PDF output file with summary info and example images
+	#Write out good and bad list: 
+	goodlistfile=open('%s/good_micrograph_list.txt' %(params['dir']),'w')
+	goodlistfile.write("\n".join(goodlist))
+
+	badlistfile=open('%s/bad_micrograph_list.txt' %(params['dir']),'w')
+	badlistfile.write('\n'.join(badlist))
 	
 	if params['debug'] is True: 
 		print goodlist

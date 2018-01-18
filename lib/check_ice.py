@@ -19,6 +19,23 @@ def checkmics(miclist,apix):
 	badlist=[]
 	counter=0
 
+	#Get micrograph directory
+        if len(miclist)>0:
+                micdirectory=miclist[0].split('/')
+                del micdirectory[-1]
+                micdirectory='/'.join(micdirectory)
+
+        if len(badlist)>0:
+                micdirectory=badlist[0].split('/')
+                del micdirectory[-1]
+                micdirectory='/'.join(micdirectory)
+
+	#Open output file
+	outfile=open('%s/vitreousIceCheck_output.txt' %(micdirectory),'w')
+
+        #Write info line: 
+        outfile.write('#Columns: micrograph name, ratio of 3.7A ring to 4A, Good/bad\n')
+
 	#Loop over all micrographs
 	for mic in miclist: 
 
@@ -67,7 +84,10 @@ def checkmics(miclist,apix):
 		nullValue=psd1D[int(Xtoget)]
 		VitreousCheck=maxValue/nullValue
 		if VitreousCheck > 0.995:
-			badlist.append(mic) 		
+			badlist.append(mic) 	
+			outfile.write('%s\t%f\t%s\n' %(mic,VitreousCheck,'Bad'))
+		if VitreousCheck <= 0.995: 
+			outfile.write('%s\t%f\t%s\n' %(mic,VitreousCheck,'Good'))	
 		#Can be used to plot with pyfits
 		'''
 		import pyfits
@@ -126,6 +146,22 @@ def findIce(goodlist,badlist,apix,diameter,percentIceAllowed):
 	miclistWithIce=[]
 	percentAreaList=[]
 
+	#Get micrograph directory
+	if len(goodlist)>0: 
+		micdirectory=goodlist[0].split('/')
+		del micdirectory[-1]
+                micdirectory='/'.join(micdirectory)
+
+	if len(badlist)>0: 
+		micdirectory=badlist[0].split('/')
+		del micdirectory[-1]
+		micdirectory='/'.join(micdirectory)
+
+	outfile=open('%s/findIce_output.txt' %(micdirectory),'w')
+
+	#Write info line: 
+	outfile.write('#Columns: micrograph name, percentage area ice, Good/bad\n')
+
 	#Hardcoded ice parameters (for now)
 	particles_size_threshold=diameter*diameter #Suggested 128*128
 	instensity_threshold=1.4
@@ -135,24 +171,27 @@ def findIce(goodlist,badlist,apix,diameter,percentIceAllowed):
 
 		#Execute icefinder, returns percent covered in ice
 		iceArea=icefinder(mic,particles_size_threshold, instensity_threshold,gaussian_filter_sigma)
-
+		
 		#Add to list	
 		percentAreaList.append(iceArea)
 
 		#Choose mic destination into good or bad list depending on % area covered
 		if iceArea > percentIceAllowed: 
 			miclistWithIce.append(mic)
+			outfile.write('%s\t%f\t%s\n' %(mic,iceArea,'Bad'))
 		if iceArea <= percentIceAllowed: 
 			miclistNoIce.append(mic)
-
+			outfile.write('%s\t%f\t%s\n' %(mic,iceArea,'Good'))
+	
 	#Output results
-	print percentAreaList
 	bins = np.linspace(0, 10,100)
 	plt.hist(percentAreaList,bins)
     	plt.title("Ratio_Histogram")
     	plt.xlabel("Value")
     	plt.ylabel("Frequency")
-    	plt.show()
+	plt.savefig('%s/percentIce_Histogram.png' %(micdirectory)) #plt.show()
+
+	outfile.close()
 
 	return miclistNoIce,miclistWithIce
 			
@@ -160,7 +199,6 @@ def findIce(goodlist,badlist,apix,diameter,percentIceAllowed):
 def icefinder(inputMRC, particles_size_threshold, instensity_threshold,gaussian_filter_sigma):
     mrcOpen=mrcfile.open(inputMRC)
     im = mrcOpen.data #Replaced with mrcfile reading operation: io.ImageCollection(path) #read images from the path
-    Ratio=[]
     sz=np.size(im) # image size 
     inverted_im = np.power(2,16)-im # invert contrast 
     im_filtered = mh.gaussian_filter(inverted_im, gaussian_filter_sigma )# gaussian filter 
@@ -173,8 +211,7 @@ def icefinder(inputMRC, particles_size_threshold, instensity_threshold,gaussian_
     relabeled, n_left = mh.labeled.relabel(labeled) #relabel 
     sizes_cleared = mh.labeled.labeled_size(relabeled)
     ratio=(np.sum(sizes_cleared[1:])/sz)*100
-    Ratio.append(ratio)
-    return Ratio
+    return ratio
 
 #====================
 def azimuthalAverage(image, center=None):
