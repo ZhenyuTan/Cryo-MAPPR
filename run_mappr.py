@@ -18,11 +18,11 @@ def setupParserOptions():
         parser = optparse.OptionParser()
         parser.set_usage("This program will assess micrograph quality and return a list of good micrographs in .star format")
         parser.add_option("--dir",dest="dir",type="string",metavar="Directory",default='blank',
-                    help="Provide directory containing micrographs")
+                    help="Provide directory containing micrographs in MRC format")
         parser.add_option("--diam",dest="diam",type="int",metavar='Diam',default=115,
                     help='Particle diameter in Angstroms (Default=115A)')
 	parser.add_option("--angpix",dest="apix",type="float",metavar='Angpix',default=0.9,
-                    help='Pixel size of micrographs in .mrc format (Default=0.9)')
+                    help='Pixel size of micrographs (Default=0.9)')
         parser.add_option("--cs",dest="cs",type="float",metavar='Cs',default=2.7,
                     help='Spherical aberration of microscope in mm (Default=2.7)')
 	parser.add_option("--kev",dest="kev",type="int",metavar='Kev',default=300,
