@@ -38,6 +38,13 @@ Options:
 
 **Note**: Program only reads MRC image files and users can specify wildcard flags to select subsets of micrographs within a given directory.
 
+## Outputs
+
+Currently, the program will output two files into the micrograph directory: 
+
+<pre>good_micrographs.txt
+bad_micrographs.txt</pre>
+
 ## Development notes
  
 The majority of the code must be written in the Cryo-MAPPR/lib python library and then imported, in order to run. 
