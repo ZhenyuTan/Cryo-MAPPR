@@ -17,6 +17,27 @@ Cryo-MAPPR requires that the Github repo be added into the user PYTHONPATH. For 
 
 <pre>export PYTHONPATH=/path/to/Cryo-MAPPR/lib:$PYTHONPATH</pre>
 
+## Usage
+
+To available options, run run_mapper.py without any inputs: 
+<pre>
+$ Cryo-MAPPR/run_mappr.py 
+Usage: This program will assess micrograph quality and return a list of good micrographs in .star format
+
+Options:
+  -h, --help           show this help message and exit
+  --dir=Directory      Provide directory containing micrographs
+  --diam=Diam          Particle diameter in Angstroms (Default=115A)
+  --angpix=Angpix      Pixel size of micrographs in .mrc format (Default=0.9)
+  --cs=Cs              Spherical aberration of microscope in mm (Default=2.7)
+  --kev=Kev            Accelerating voltage of microscope (Default=300)
+  --wildcard=wildcard  Optional: Provide wildcard suffix for input
+                       micrographs. Default is none
+  -v                   Print version and exit.
+  -d                   debug</pre>
+
+**Note**: Program only reads MRC image files and users can specify wildcard flags to select subsets of micrographs within a given directory.
+
 ## Development notes
  
 The majority of the code must be written in the Cryo-MAPPR/lib python library and then imported, in order to run. 
