@@ -19,7 +19,9 @@ def setupParserOptions():
         parser.set_usage("This program will assess micrograph quality and return a list of good micrographs in .star format")
         parser.add_option("--dir",dest="dir",type="string",metavar="Directory",default='blank',
                     help="Provide directory containing micrographs")
-        parser.add_option("--angpix",dest="apix",type="float",metavar='Angpix',default=0.9,
+        parser.add_option("--diam",dest="diam",type="int",metavar='Diam',default=115,
+                    help='Particle diameter in Angstroms (Default=115A)')
+	parser.add_option("--angpix",dest="apix",type="float",metavar='Angpix',default=0.9,
                     help='Pixel size of micrographs in .mrc format (Default=0.9)')
         parser.add_option("--cs",dest="cs",type="float",metavar='Cs',default=2.7,
                     help='Spherical aberration of microscope in mm (Default=2.7)')
@@ -72,10 +74,23 @@ if __name__ == "__main__":
 	#Check inputs exist
 	checkConflicts(params)
 
-	#Check for non-vitreous ice in images by looking at 3.5 A intensity. If ____ sigma about background, then discard
-	badlist=check_ice.checkmics(glob.glob('%s/*%s.mrc' %(params['dir'],params['wildcard'])),params['apix'])
+	#Set up lists
+	goodlist=glob.glob('%s/*%s.mrc' %(params['dir'],params['wildcard']))
+	badlist=[]	
 
+	#Check for non-vitreous ice in images by looking at 3.7 A intensity. If >0.995 sigma about background, then discard
+	goodlist,badlist=check_ice.checkmics(goodlist,params['apix'])
+
+	#Look for the presence of ice contaminants > 2*particle diameter, comprising > 1% of micrograph
+	percentIceAllowed=1 #Hard coded parameter: percentage of micrograph covered by ice 
+	check_ice.findIce(goodlist,badlist,params['apix'],params['diam'],percentIceAllowed)
+
+	#Remove micrographs with more than ___% of pixels outside of 4 sigma
+	#goodlist,badlist=check_ice.checkStats(goodlist,badlist)
+	
 	#Create PDF output file with summary info and example images
-	print badlist
+	
 	if params['debug'] is True: 
+		print goodlist
+		print badlist
 		print 'finished'

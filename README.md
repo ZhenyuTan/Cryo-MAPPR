@@ -9,7 +9,9 @@ The goal of this project is to fullly automate micrograph assessment and particl
 Software dependencies: 
 * mrcfile - python package to read MRC Files ($ pip install mrcfile --user)
 * CTFFIND4 - CTF estimation program (http://grigoriefflab.janelia.org/ctffind4)
-* scipy & numpy 
+* scipy & numpy ($ pip install numpy scipy --user) 
+* Python image library ($ pip install pillow --user)
+* mahota ($ pip install mahota --user)
 
 Cryo-MAPPR requires that the Github repo be added into the user PYTHONPATH. For bash shells, include this in your .bashrc: 
 
